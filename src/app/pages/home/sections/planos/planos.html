@@ -1,0 +1,190 @@
+<section class="planos container">
+  <div class="planos__cabecalho">
+    <div>
+      <p class="planos__eyebrow">Investimento</p>
+      <h2 class="planos__title">Planos</h2>
+      <p class="planos__subtitle">Escolha o plano e comece a acompanhar sua comarca hoje.</p>
+    </div>
+
+    @if (!loading() && !loadError() && planosOrdenados().length) {
+      <div class="periodicidade-toggle" role="radiogroup" aria-label="Periodicidade de cobrança">
+        @for (periodicidade of periodicidades; track periodicidade) {
+          <button
+            type="button"
+            class="periodicidade-toggle__opcao"
+            [class.periodicidade-toggle__opcao--ativa]="periodicidadeVisualizacao() === periodicidade"
+            [attr.aria-pressed]="periodicidadeVisualizacao() === periodicidade"
+            (click)="escolherPeriodicidadeVisualizacao(periodicidade)"
+          >
+            {{ rotuloPeriodicidade[periodicidade] }}
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="planos__grid" aria-busy="true">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="plano-card plano-card--skeleton" aria-hidden="true"></div>
+      }
+    </div>
+    <p class="planos__status">Carregando planos…</p>
+  }
+
+  @if (!loading() && loadError()) {
+    <p class="planos__status planos__status--erro" role="alert">
+      Não foi possível carregar os planos agora. Tente recarregar a página.
+    </p>
+  }
+
+  @if (!loading() && !loadError()) {
+    <div class="planos__grid">
+      @for (plano of planosOrdenados(); track plano.id; let i = $index) {
+        <article class="plano-card" [class.plano-card--destaque]="i === 1" [class.plano-card--ilimitado]="plano.tipo === 'ILIMITADO'">
+          @if (i === 1) {
+            <span class="plano-card__selo">Mais escolhido</span>
+          }
+
+          <h3 class="plano-card__nome">{{ plano.nome }}</h3>
+          <p class="plano-card__descricao">{{ plano.descricao }}</p>
+
+          @if (plano.tipo === 'FIXO') {
+            @if (precoExibido(plano); as ciclo) {
+              <div class="plano-card__preco">
+                <span class="plano-card__preco-valor">
+                  R$ {{ (ciclo.valorCiclo / (ciclo.periodicidade === 'MENSAL' ? 1 : ciclo.periodicidade === 'TRIMESTRAL' ? 3 : 12)).toFixed(0) }}
+                </span>
+                <span class="plano-card__preco-sufixo">/mês</span>
+              </div>
+              @if (ciclo.periodicidade !== 'MENSAL') {
+                <p class="plano-card__preco-detalhe">
+                  R$ {{ ciclo.valorCiclo.toFixed(2) }} cobrado {{ ciclo.periodicidade === 'TRIMESTRAL' ? 'a cada 3 meses' : 'uma vez por ano' }}
+                  @if (ciclo.percentualDesconto > 0) {
+                    <span class="plano-card__desconto">−{{ ciclo.percentualDesconto }}%</span>
+                  }
+                </p>
+              }
+            }
+          } @else {
+            <div class="plano-card__preco plano-card__preco--ilimitado">
+              <span class="plano-card__preco-valor">Ilimitado</span>
+            </div>
+            <p class="plano-card__preco-detalhe">Sob consulta com o time comercial</p>
+          }
+
+          @if (plano.limites?.length) {
+            <ul class="plano-card__lista">
+              @for (limite of plano.limites!.slice(0, 4); track limite.recursoCodigo) {
+                <li>
+                  <span class="plano-card__check" aria-hidden="true">✓</span>
+                  {{ limite.limiteIncluso | number: '1.0-0' }} {{ limite.recursoNome | lowercase }}
+                </li>
+              }
+            </ul>
+          }
+
+          <button type="button" class="plano-card__cta" (click)="escolherPlano(plano)">
+            Contratar {{ plano.nome }}
+          </button>
+        </article>
+      }
+    </div>
+  }
+
+  @if (planoSelecionado(); as plano) {
+    <div class="checkout" role="dialog" aria-modal="true" aria-labelledby="checkout-titulo" (click)="fecharFormulario()">
+      <div class="checkout__painel" (click)="$event.stopPropagation()">
+        <button type="button" class="checkout__fechar" (click)="fecharFormulario()" aria-label="Fechar formulário">
+          ×
+        </button>
+
+        <p class="checkout__eyebrow">Contratação</p>
+        <h3 id="checkout-titulo" class="checkout__titulo">{{ plano.nome }}</h3>
+
+        @if (plano.tipo === 'FIXO') {
+          <div class="checkout__periodicidade" role="radiogroup" aria-label="Periodicidade">
+            @for (ciclo of plano.precos ?? []; track ciclo.periodicidade) {
+              <button
+                type="button"
+                class="checkout__periodicidade-opcao"
+                [class.checkout__periodicidade-opcao--ativa]="periodicidadeSelecionada() === ciclo.periodicidade"
+                [attr.aria-pressed]="periodicidadeSelecionada() === ciclo.periodicidade"
+                (click)="selecionarPeriodicidade(ciclo.periodicidade)"
+              >
+                <span class="checkout__periodicidade-nome">{{ rotuloPeriodicidade[ciclo.periodicidade] }}</span>
+                <span class="checkout__periodicidade-valor">R$ {{ ciclo.valorCiclo.toFixed(2) }}</span>
+                @if (ciclo.percentualDesconto > 0) {
+                  <span class="checkout__periodicidade-desconto">−{{ ciclo.percentualDesconto }}%</span>
+                }
+              </button>
+            }
+          </div>
+
+          @if (cicloAtivo(); as ciclo) {
+            <div class="checkout__resumo">
+              <span class="checkout__resumo-label">Total {{ rotuloPeriodicidade[ciclo.periodicidade] | lowercase }}</span>
+              <span class="checkout__resumo-valor">R$ {{ ciclo.valorCiclo.toFixed(2) }}</span>
+            </div>
+          }
+        }
+
+        <form class="checkout__form" (submit)="$event.preventDefault(); enviarCheckout()">
+          <div class="checkout__campo">
+            <label for="nomeConta">Nome da conta</label>
+            <input id="nomeConta" type="text" placeholder="Ex.: Escritório Silva Advocacia" [formField]="checkoutForm.nomeConta" />
+            @if (checkoutForm.nomeConta().touched() && checkoutForm.nomeConta().errors().length) {
+              <p class="checkout__erro-campo">{{ checkoutForm.nomeConta().errors()[0].message }}</p>
+            }
+          </div>
+
+          <div class="checkout__campo">
+            <label for="emailContato">E-mail de contato</label>
+            <input id="emailContato" type="email" placeholder="voce@escritorio.com.br" [formField]="checkoutForm.emailContato" />
+            @if (checkoutForm.emailContato().touched() && checkoutForm.emailContato().errors().length) {
+              <p class="checkout__erro-campo">{{ checkoutForm.emailContato().errors()[0].message }}</p>
+            }
+          </div>
+
+          <div class="checkout__campo">
+            <label for="confirmacaoEmail">Confirme o e-mail</label>
+            <input
+              id="confirmacaoEmail"
+              type="email"
+              placeholder="voce@escritorio.com.br"
+              autocomplete="off"
+              (paste)="$event.preventDefault()"
+              [formField]="checkoutForm.confirmacaoEmail"
+            />
+            @if (checkoutForm.confirmacaoEmail().touched() && checkoutForm.confirmacaoEmail().errors().length) {
+              <p class="checkout__erro-campo">{{ checkoutForm.confirmacaoEmail().errors()[0].message }}</p>
+            }
+          </div>
+
+          <div class="checkout__campo">
+            <label for="telefoneCelular">Telefone celular</label>
+            <input
+              id="telefoneCelular"
+              type="tel"
+              placeholder="(11) 91234-5678"
+              [formField]="checkoutForm.telefoneCelular"
+              (input)="formatarTelefone($event)"
+            />
+            @if (checkoutForm.telefoneCelular().touched() && checkoutForm.telefoneCelular().errors().length) {
+              <p class="checkout__erro-campo">{{ checkoutForm.telefoneCelular().errors()[0].message }}</p>
+            }
+          </div>
+
+          @if (submitError()) {
+            <p class="checkout__erro" role="alert">{{ submitError() }}</p>
+          }
+
+          <button type="submit" class="checkout__submit" [disabled]="submitting()">
+            {{ submitting() ? 'Enviando…' : 'Ir para pagamento' }}
+          </button>
+          <p class="checkout__seguranca">Pagamento processado com segurança pelo Stripe.</p>
+        </form>
+      </div>
+    </div>
+  }
+</section>

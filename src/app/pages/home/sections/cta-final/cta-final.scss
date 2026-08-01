@@ -1,0 +1,33 @@
+.cta-final {
+  padding-block: var(--space-16);
+  border-top: 1px solid var(--color-line);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.cta-final__title {
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  max-width: 32ch;
+}
+
+.cta-final__texto {
+  color: var(--color-ink-soft);
+  max-width: 40ch;
+}
+
+.cta-final__botao {
+  margin-block-start: var(--space-4);
+  padding: var(--space-3) var(--space-8);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-paper);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.cta-final__botao:hover {
+  background: var(--color-accent-strong);
+}

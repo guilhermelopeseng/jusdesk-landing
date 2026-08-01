@@ -1,0 +1,24 @@
+<section class="faq container">
+  <h2 class="faq__title">Perguntas frequentes</h2>
+  <dl class="faq__lista">
+    @for (item of perguntas; track item.pergunta; let i = $index) {
+      <div class="faq__item">
+        <dt>
+          <button
+            type="button"
+            class="faq__pergunta"
+            [attr.aria-expanded]="abertaIndex() === i"
+            [attr.aria-controls]="'faq-resposta-' + i"
+            (click)="alternar(i)"
+          >
+            {{ item.pergunta }}
+            <span aria-hidden="true">{{ abertaIndex() === i ? '−' : '+' }}</span>
+          </button>
+        </dt>
+        @if (abertaIndex() === i) {
+          <dd [id]="'faq-resposta-' + i" class="faq__resposta">{{ item.resposta }}</dd>
+        }
+      </div>
+    }
+  </dl>
+</section>

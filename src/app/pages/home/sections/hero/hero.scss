@@ -1,0 +1,77 @@
+.hero {
+  display: grid;
+  gap: var(--space-12);
+  padding-block: var(--space-16) var(--space-12);
+}
+
+.hero__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-brass);
+  margin-block-end: var(--space-4);
+}
+
+.hero__title {
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 600;
+  max-width: 20ch;
+}
+
+.hero__title em {
+  font-style: normal;
+  color: var(--color-accent);
+}
+
+.hero__lede {
+  margin-block-start: var(--space-4);
+  max-width: 42ch;
+  color: var(--color-ink-soft);
+  font-size: 1.125rem;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-block-start: var(--space-8);
+}
+
+.hero__cta {
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-sm);
+  background: var(--color-accent);
+  color: var(--color-paper);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.hero__cta:hover {
+  background: var(--color-accent-strong);
+}
+
+.hero__secondary {
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-line);
+  color: var(--color-ink);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.hero__secondary:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.hero__stat {
+  max-width: 26rem;
+}
+
+@media (min-width: 60rem) {
+  .hero {
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: center;
+  }
+}

@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /contratacao/sucesso
+Disallow: /contratacao/cancelado
+Allow: /
+
+Sitemap: https://jusdesk.com.br/sitemap.xml
