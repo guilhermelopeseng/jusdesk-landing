@@ -19,11 +19,11 @@ export class Home {
   private readonly meta = inject(Meta);
 
   constructor() {
-    this.title.setTitle('JusDesk — Jurimetria hiperlocal para advogados');
+    this.title.setTitle('JusDesk — Monitoramento de processos e publicações para advogados');
     this.meta.updateTag({
       name: 'description',
       content:
-        'JusDesk: radar de prazos, resumo de publicações por IA e jurimetria hiperlocal por vara para advogados autônomos e escritórios de comarcas pequenas.',
+        'JusDesk: monitoramento de processos e das publicações do DJEN pela sua OAB, com alertas por WhatsApp e e-mail, resumo por IA e assistente no WhatsApp para advogados autônomos e escritórios.',
     });
   }
 }
