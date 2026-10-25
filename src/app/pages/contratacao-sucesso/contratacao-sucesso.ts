@@ -15,7 +15,7 @@ export class ContratacaoSucesso {
   private readonly meta = inject(Meta);
 
   constructor() {
-    this.title.setTitle('Pagamento confirmado — JusDesk');
+    this.title.setTitle('Cadastro recebido — JusDesk');
     this.meta.updateTag({ name: 'robots', content: 'noindex' });
   }
 }
