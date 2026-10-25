@@ -388,6 +388,19 @@
   font-weight: 600;
 }
 
+/* celular: 3 colunas não comportam "R$ 2.196,96" em mono; uma opção por linha */
+@media (max-width: 30rem) {
+  .checkout__periodicidade {
+    grid-template-columns: 1fr;
+  }
+
+  .checkout__periodicidade-opcao {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+  }
+}
+
 .checkout__periodicidade-desconto {
   position: absolute;
   top: -0.55rem;
