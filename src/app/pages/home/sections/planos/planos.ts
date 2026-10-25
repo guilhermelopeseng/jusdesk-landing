@@ -6,6 +6,7 @@ import { FormField, email, form, required, submit, validate } from '@angular/for
 import { ApiError, isStandardError, parseApiError } from '../../../../core/models/api-error.model';
 import { CicloPreco, Periodicidade, Plano } from '../../../../core/models/plano.model';
 import { CadastroService } from '../../../../core/services/cadastro.service';
+import { documentoValido } from '../../../../core/utils/documento';
 import { PlanosService } from '../../../../core/services/planos.service';
 
 interface CheckoutForm {
@@ -90,6 +91,9 @@ export class Planos {
       const digitos = ctx.value().replace(/\D/g, '');
       if (digitos.length !== 11 && digitos.length !== 14) {
         return { kind: 'documentoInvalido', message: 'Informe um CPF (11 dígitos) ou CNPJ (14 dígitos).' };
+      }
+      if (!documentoValido(digitos)) {
+        return { kind: 'documentoInvalido', message: 'CPF ou CNPJ inválido. Confira os números.' };
       }
       return null;
     });
