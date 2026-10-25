@@ -183,7 +183,14 @@
 
           <div class="checkout__campo">
             <label for="documento">CPF ou CNPJ</label>
-            <input id="documento" type="text" inputmode="numeric" placeholder="000.000.000-00" [formField]="checkoutForm.documento" />
+            <input
+              id="documento"
+              type="text"
+              inputmode="numeric"
+              placeholder="000.000.000-00 ou 00.000.000/0000-00"
+              [formField]="checkoutForm.documento"
+              (input)="formatarDocumento($event)"
+            />
             @if (checkoutForm.documento().touched() && checkoutForm.documento().errors().length) {
               <p class="checkout__erro-campo">{{ checkoutForm.documento().errors()[0].message }}</p>
             }

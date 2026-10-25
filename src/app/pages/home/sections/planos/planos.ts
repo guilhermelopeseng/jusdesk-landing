@@ -192,7 +192,30 @@ export class Planos {
     if (digitos.length > 7) {
       formatado = `(${digitos.slice(0, 2)}) ${digitos.slice(2, 7)}-${digitos.slice(7)}`;
     }
+    // o input também: o [formField] lê o valor do elemento no mesmo evento
+    input.value = formatado;
     this.checkoutForm.telefoneCelular().value.set(formatado);
+  }
+
+  /** 000.000.000-00 até 11 dígitos; 00.000.000/0000-00 a partir do 12º. */
+  protected formatarDocumento(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const d = input.value.replace(/\D/g, '').slice(0, 14);
+    let formatado: string;
+    if (d.length <= 11) {
+      formatado = d
+        .replace(/^(\d{3})(\d)/, '$1.$2')
+        .replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3')
+        .replace(/\.(\d{3})(\d)/, '.$1-$2');
+    } else {
+      formatado = d
+        .replace(/^(\d{2})(\d)/, '$1.$2')
+        .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+        .replace(/\.(\d{3})(\d)/, '.$1/$2')
+        .replace(/(\d{4})(\d)/, '$1-$2');
+    }
+    input.value = formatado;
+    this.checkoutForm.documento().value.set(formatado);
   }
 
   protected fecharFormulario(): void {
@@ -216,8 +239,9 @@ export class Planos {
             nomeConta: valor.nomeConta,
             emailContato: valor.emailContato,
             confirmacaoEmail: valor.confirmacaoEmail,
-            telefoneCelular: valor.telefoneCelular,
-            documento: valor.documento,
+            // gravados só com dígitos, com ou sem a máscara
+            telefoneCelular: valor.telefoneCelular.replace(/\D/g, ''),
+            documento: valor.documento.replace(/\D/g, ''),
             periodicidade: plano.tipo === 'FIXO' ? (this.periodicidadeSelecionada() ?? undefined) : undefined,
           })
           .toPromise();
