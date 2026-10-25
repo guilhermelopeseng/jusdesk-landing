@@ -78,7 +78,7 @@
               @for (limite of plano.limites!.slice(0, 4); track limite.recursoCodigo) {
                 <li>
                   <span class="plano-card__check" aria-hidden="true">✓</span>
-                  {{ limite.limiteIncluso | number: '1.0-0' }} {{ limite.recursoNome | lowercase }}
+                  {{ rotuloLimite(limite) }}
                 </li>
               }
             </ul>

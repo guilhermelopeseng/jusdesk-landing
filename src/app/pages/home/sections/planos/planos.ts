@@ -4,7 +4,7 @@ import { Component, afterNextRender, computed, inject, signal } from '@angular/c
 import { Router } from '@angular/router';
 import { FormField, email, form, required, submit, validate } from '@angular/forms/signals';
 import { ApiError, isStandardError, parseApiError } from '../../../../core/models/api-error.model';
-import { CicloPreco, Periodicidade, Plano } from '../../../../core/models/plano.model';
+import { CicloPreco, LimiteRecurso, Periodicidade, Plano } from '../../../../core/models/plano.model';
 import { CadastroService } from '../../../../core/services/cadastro.service';
 import { documentoValido } from '../../../../core/utils/documento';
 import { PlanosService } from '../../../../core/services/planos.service';
@@ -26,6 +26,21 @@ const ROTULO_PERIODICIDADE: Record<Periodicidade, string> = {
 };
 
 const PERIODICIDADES: Periodicidade[] = ['MENSAL', 'TRIMESTRAL', 'ANUAL'];
+
+const NUMERO = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 0 });
+
+/** Rótulo de cada limite no card: [singular, plural]; {n} = quantidade formatada. */
+const ROTULO_LIMITE: Record<string, [string, string]> = {
+  PROCESSOS_MONITORADOS: ['{n} processo monitorado', '{n} processos monitorados'],
+  ADVOGADOS_MONITORADOS: ['{n} advogado (OAB) monitorado', '{n} advogados (OABs) monitorados'],
+  USUARIOS_CADASTRADOS: ['{n} usuário', '{n} usuários'],
+  CLIENTES_CADASTRADOS: ['{n} cliente cadastrado', '{n} clientes cadastrados'],
+  RESUMOS_IA: ['{n} resumo de publicação por IA por mês', '{n} resumos de publicação por IA por mês'],
+  // a cota do assistente é em tokens, não em mensagens
+  MENSAGENS_CHATBOT: ['{n} token do assistente no WhatsApp por mês', '{n} tokens do assistente no WhatsApp por mês'],
+  ARMAZENAMENTO_DOCUMENTOS: ['{n} GB para documentos', '{n} GB para documentos'],
+  DOCUMENTOS_SALVOS: ['{n} documento por cliente', '{n} documentos por cliente'],
+};
 
 @Component({
   selector: 'app-planos',
@@ -127,6 +142,13 @@ export class Planos {
     return (
       plano.precos?.find((ciclo) => ciclo.periodicidade === periodicidade) ?? plano.precos?.[0] ?? null
     );
+  }
+
+  protected rotuloLimite(limite: LimiteRecurso): string {
+    const n = NUMERO.format(limite.limiteIncluso);
+    const rotulo = ROTULO_LIMITE[limite.recursoCodigo];
+    if (!rotulo) return `${n} ${limite.recursoNome.toLowerCase()}`;
+    return rotulo[limite.limiteIncluso === 1 ? 0 : 1].replace('{n}', n);
   }
 
   protected escolherPeriodicidadeVisualizacao(periodicidade: Periodicidade): void {
