@@ -53,13 +53,13 @@
             @if (precoExibido(plano); as ciclo) {
               <div class="plano-card__preco">
                 <span class="plano-card__preco-valor">
-                  R$ {{ (ciclo.valorCiclo / (ciclo.periodicidade === 'MENSAL' ? 1 : ciclo.periodicidade === 'TRIMESTRAL' ? 3 : 12)).toFixed(0) }}
+                  R$ {{ ciclo.valorCiclo / (ciclo.periodicidade === 'MENSAL' ? 1 : ciclo.periodicidade === 'TRIMESTRAL' ? 3 : 12) | number: '1.0-0' }}
                 </span>
                 <span class="plano-card__preco-sufixo">/mês</span>
               </div>
               @if (ciclo.periodicidade !== 'MENSAL') {
                 <p class="plano-card__preco-detalhe">
-                  R$ {{ ciclo.valorCiclo.toFixed(2) }} cobrado {{ ciclo.periodicidade === 'TRIMESTRAL' ? 'a cada 3 meses' : 'uma vez por ano' }}
+                  {{ ciclo.valorCiclo | currency: 'BRL' }} cobrado {{ ciclo.periodicidade === 'TRIMESTRAL' ? 'a cada 3 meses' : 'uma vez por ano' }}
                   @if (ciclo.percentualDesconto > 0) {
                     <span class="plano-card__desconto">−{{ ciclo.percentualDesconto }}%</span>
                   }
@@ -113,7 +113,7 @@
                 (click)="selecionarPeriodicidade(ciclo.periodicidade)"
               >
                 <span class="checkout__periodicidade-nome">{{ rotuloPeriodicidade[ciclo.periodicidade] }}</span>
-                <span class="checkout__periodicidade-valor">R$ {{ ciclo.valorCiclo.toFixed(2) }}</span>
+                <span class="checkout__periodicidade-valor">{{ ciclo.valorCiclo | currency: 'BRL' }}</span>
                 @if (ciclo.percentualDesconto > 0) {
                   <span class="checkout__periodicidade-desconto">−{{ ciclo.percentualDesconto }}%</span>
                 }
@@ -124,7 +124,7 @@
           @if (cicloAtivo(); as ciclo) {
             <div class="checkout__resumo">
               <span class="checkout__resumo-label">Total {{ rotuloPeriodicidade[ciclo.periodicidade] | lowercase }}</span>
-              <span class="checkout__resumo-valor">R$ {{ ciclo.valorCiclo.toFixed(2) }}</span>
+              <span class="checkout__resumo-valor">{{ ciclo.valorCiclo | currency: 'BRL' }}</span>
             </div>
           }
         }

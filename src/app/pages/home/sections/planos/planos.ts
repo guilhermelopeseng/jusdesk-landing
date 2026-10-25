@@ -1,4 +1,4 @@
-import { DecimalPipe, LowerCasePipe } from '@angular/common';
+import { CurrencyPipe, DecimalPipe, LowerCasePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, afterNextRender, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
@@ -29,7 +29,7 @@ const PERIODICIDADES: Periodicidade[] = ['MENSAL', 'TRIMESTRAL', 'ANUAL'];
 
 @Component({
   selector: 'app-planos',
-  imports: [FormField, DecimalPipe, LowerCasePipe],
+  imports: [FormField, CurrencyPipe, DecimalPipe, LowerCasePipe],
   templateUrl: './planos.html',
   styleUrl: './planos.scss',
   host: {
