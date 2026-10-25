@@ -20,12 +20,12 @@ export class Faq {
     {
       pergunta: 'Como funciona o pagamento?',
       resposta:
-        'Você escolhe o plano na própria página, informa nome da conta e e-mail, e é redirecionado para o checkout seguro do Stripe.',
+        'Você escolhe o plano na própria página e envia o cadastro. Nosso time envia a cobrança pelo Asaas e você paga como preferir: Pix, boleto ou cartão. Planos trimestral e anual têm desconto.',
     },
     {
-      pergunta: 'Minha conta fica ativa imediatamente após o pagamento?',
+      pergunta: 'Quando minha conta fica ativa?',
       resposta:
-        'O pagamento é confirmado na hora, mas a ativação da conta é feita manualmente pela nossa equipe e você recebe um e-mail assim que estiver pronta.',
+        'Assim que o primeiro pagamento é confirmado pelo Asaas, a conta é ativada automaticamente e você recebe um e-mail para definir sua senha.',
     },
     {
       pergunta: 'Posso trocar de plano depois?',

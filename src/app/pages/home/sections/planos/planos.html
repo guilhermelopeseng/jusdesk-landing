@@ -175,14 +175,24 @@
             }
           </div>
 
+          <div class="checkout__campo">
+            <label for="documento">CPF ou CNPJ</label>
+            <input id="documento" type="text" inputmode="numeric" placeholder="000.000.000-00" [formField]="checkoutForm.documento" />
+            @if (checkoutForm.documento().touched() && checkoutForm.documento().errors().length) {
+              <p class="checkout__erro-campo">{{ checkoutForm.documento().errors()[0].message }}</p>
+            }
+          </div>
+
           @if (submitError()) {
             <p class="checkout__erro" role="alert">{{ submitError() }}</p>
           }
 
           <button type="submit" class="checkout__submit" [disabled]="submitting()">
-            {{ submitting() ? 'Enviando…' : 'Ir para pagamento' }}
+            {{ submitting() ? 'Enviando…' : 'Enviar cadastro' }}
           </button>
-          <p class="checkout__seguranca">Pagamento processado com segurança pelo Stripe.</p>
+          <p class="checkout__seguranca">
+            Sem pagamento agora: nosso time envia a cobrança pelo Asaas e você escolhe Pix, boleto ou cartão.
+          </p>
         </form>
       </div>
     </div>

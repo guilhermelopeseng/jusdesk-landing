@@ -1,10 +1,11 @@
 import { DecimalPipe, LowerCasePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, afterNextRender, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { FormField, email, form, required, submit, validate } from '@angular/forms/signals';
 import { ApiError, isStandardError, parseApiError } from '../../../../core/models/api-error.model';
 import { CicloPreco, Periodicidade, Plano } from '../../../../core/models/plano.model';
-import { CheckoutService } from '../../../../core/services/checkout.service';
+import { CadastroService } from '../../../../core/services/cadastro.service';
 import { PlanosService } from '../../../../core/services/planos.service';
 
 interface CheckoutForm {
@@ -12,6 +13,7 @@ interface CheckoutForm {
   emailContato: string;
   confirmacaoEmail: string;
   telefoneCelular: string;
+  documento: string;
 }
 
 const TELEFONE_CELULAR_REGEX = /^\d{2}9\d{8}$/;
@@ -35,7 +37,8 @@ const PERIODICIDADES: Periodicidade[] = ['MENSAL', 'TRIMESTRAL', 'ANUAL'];
 })
 export class Planos {
   private readonly planosService = inject(PlanosService);
-  private readonly checkoutService = inject(CheckoutService);
+  private readonly cadastroService = inject(CadastroService);
+  private readonly router = inject(Router);
 
   protected readonly rotuloPeriodicidade = ROTULO_PERIODICIDADE;
   protected readonly periodicidades = PERIODICIDADES;
@@ -61,6 +64,7 @@ export class Planos {
     emailContato: '',
     confirmacaoEmail: '',
     telefoneCelular: '',
+    documento: '',
   });
   protected readonly checkoutForm = form(this.modelo, (path) => {
     required(path.nomeConta, { message: 'Informe o nome da conta.' });
@@ -78,6 +82,14 @@ export class Planos {
       const digitos = ctx.value().replace(/\D/g, '');
       if (!TELEFONE_CELULAR_REGEX.test(digitos)) {
         return { kind: 'telefoneInvalido', message: 'Informe um telefone celular válido, com DDD.' };
+      }
+      return null;
+    });
+    required(path.documento, { message: 'Informe o CPF ou CNPJ.' });
+    validate(path.documento, (ctx) => {
+      const digitos = ctx.value().replace(/\D/g, '');
+      if (digitos.length !== 11 && digitos.length !== 14) {
+        return { kind: 'documentoInvalido', message: 'Informe um CPF (11 dígitos) ou CNPJ (14 dígitos).' };
       }
       return null;
     });
@@ -162,19 +174,20 @@ export class Planos {
       this.submitting.set(true);
       try {
         const valor = field().value();
-        const response = await this.checkoutService
+        const response = await this.cadastroService
           .criar({
             planoId: plano.id,
             nomeConta: valor.nomeConta,
             emailContato: valor.emailContato,
             confirmacaoEmail: valor.confirmacaoEmail,
             telefoneCelular: valor.telefoneCelular,
+            documento: valor.documento,
             periodicidade: plano.tipo === 'FIXO' ? (this.periodicidadeSelecionada() ?? undefined) : undefined,
           })
           .toPromise();
 
         if (response) {
-          window.location.href = response.checkoutUrl;
+          await this.router.navigate(['/contratacao/sucesso']);
         }
         return undefined;
       } catch (err) {

@@ -11,13 +11,6 @@ export const routes: Routes = [
       import('./pages/contratacao-sucesso/contratacao-sucesso').then((m) => m.ContratacaoSucesso),
   },
   {
-    path: 'contratacao/cancelado',
-    loadComponent: () =>
-      import('./pages/contratacao-cancelado/contratacao-cancelado').then(
-        (m) => m.ContratacaoCancelado,
-      ),
-  },
-  {
     path: 'politica-de-privacidade',
     loadComponent: () =>
       import('./pages/politica-de-privacidade/politica-de-privacidade').then(
