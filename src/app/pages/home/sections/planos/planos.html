@@ -73,9 +73,15 @@
             <p class="plano-card__preco-detalhe">Sob consulta com o time comercial</p>
           }
 
-          @if (plano.limites?.length) {
+          @if (plano.tipo === 'ILIMITADO') {
             <ul class="plano-card__lista">
-              @for (limite of plano.limites!.slice(0, 4); track limite.recursoCodigo) {
+              <li><span class="plano-card__check" aria-hidden="true">✓</span> Processos, advogados e usuários sem limite</li>
+              <li><span class="plano-card__check" aria-hidden="true">✓</span> Mensalidade fixa + uso real do mês</li>
+              <li><span class="plano-card__check" aria-hidden="true">✓</span> Armazenamento de documentos sem limite</li>
+            </ul>
+          } @else if (plano.limites?.length) {
+            <ul class="plano-card__lista">
+              @for (limite of limitesOrdenados(plano); track limite.recursoCodigo) {
                 <li>
                   <span class="plano-card__check" aria-hidden="true">✓</span>
                   {{ rotuloLimite(limite) }}

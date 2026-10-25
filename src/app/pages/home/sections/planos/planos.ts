@@ -35,10 +35,10 @@ const ROTULO_LIMITE: Record<string, [string, string]> = {
   ADVOGADOS_MONITORADOS: ['{n} advogado (OAB) monitorado', '{n} advogados (OABs) monitorados'],
   USUARIOS_CADASTRADOS: ['{n} usuário', '{n} usuários'],
   CLIENTES_CADASTRADOS: ['{n} cliente cadastrado', '{n} clientes cadastrados'],
+  ARMAZENAMENTO_DOCUMENTOS: ['{n} GB para documentos', '{n} GB para documentos'],
   RESUMOS_IA: ['{n} resumo de publicação por IA por mês', '{n} resumos de publicação por IA por mês'],
   // a cota do assistente é em tokens, não em mensagens
   MENSAGENS_CHATBOT: ['{n} token do assistente no WhatsApp por mês', '{n} tokens do assistente no WhatsApp por mês'],
-  ARMAZENAMENTO_DOCUMENTOS: ['{n} GB para documentos', '{n} GB para documentos'],
   DOCUMENTOS_SALVOS: ['{n} documento por cliente', '{n} documentos por cliente'],
 };
 
@@ -142,6 +142,16 @@ export class Planos {
     return (
       plano.precos?.find((ciclo) => ciclo.periodicidade === periodicidade) ?? plano.precos?.[0] ?? null
     );
+  }
+
+  /** Todos os limites do plano, os mais decisivos primeiro (ordem de ROTULO_LIMITE). */
+  protected limitesOrdenados(plano: Plano): LimiteRecurso[] {
+    const ordem = Object.keys(ROTULO_LIMITE);
+    const posicao = (l: LimiteRecurso) => {
+      const i = ordem.indexOf(l.recursoCodigo);
+      return i === -1 ? ordem.length : i;
+    };
+    return [...(plano.limites ?? [])].sort((a, b) => posicao(a) - posicao(b));
   }
 
   protected rotuloLimite(limite: LimiteRecurso): string {
